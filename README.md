@@ -11,7 +11,7 @@ npm install
 
 truffle compile
 
-truffle migrate --reset --network rinkeby -f 2
+truffle migrate --reset --network kovan -f 2
 
-truffle run verify SmartRPA --network rinkeby --license MIT
+truffle run verify SmartRPA --network kovan --license MIT
 ```
