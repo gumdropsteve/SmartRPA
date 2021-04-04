@@ -25,12 +25,14 @@ contract SmartRPA is ERC721, ChainlinkClient {
     
     string clauseCode;
     
-    constructor() ERC721("SmartRPA", "SRPA") public {
+    constructor(address _link) ERC721("SmartRPA", "SRPA") public {
         buyer = msg.sender;
         seller = 0x479A603C1Cb5F019c50A90Eb74F046B89AB780f7;
-        
-        setPublicChainlinkToken();
-        oracle = 0xAA1DC356dc4B18f30C347798FD5379F3D77ABC5b; // https://ethereum.stackexchange.com/q/96531/69999
+        if (_link == address(0)) {
+            setPublicChainlinkToken();
+        } else {
+            setChainlinkToken(_link);
+        }
         jobId = "982105d690504c5d9ce374d040c08654";
         fee = 0.1 * 10 ** 18; // 0.1 LINK
        
@@ -56,16 +58,20 @@ contract SmartRPA is ERC721, ChainlinkClient {
             selfdestruct(buyer);
         } else {
             activeOffer = true;
-        }    }
+        }   
+    }
+    
     
     // dont call this function until some initial link has been deposited
     // activates the rpa (send initial offer to seller)
     // expire the rpa after expirationTime has elapsed (in minutes)
-    function submitOffer(uint daysToRespond, string memory _rpa) public {
+    function submitOffer(uint daysToRespond, string memory _rpa, address _oracle) public {
         require(msg.sender == buyer);
         activeOffer = true;
         offerRespondedTo = false;
         rpa = _rpa;
+        // oracle = //0xAA1DC356dc4B18f30C347798FD5379F3D77ABC5b; // https://ethereum.stackexchange.com/q/96531/69999
+        oracle = _oracle; // use dependency injection so we can pass mock oracles in for testing
         createTimerForExpiration(daysToRespond * 1 minutes, "0"); // convert to minutes for timer (1440 minutes = 1 day), clauseCode ('0' = initial offer acceptance)
     }
 
