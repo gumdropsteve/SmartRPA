@@ -66,7 +66,7 @@ contract SmartRPA is ERC721, ChainlinkClient {
     // activates the rpa (send initial offer to seller)
     // expire the rpa after expirationTime has elapsed (in minutes)
     function submitOffer(uint daysToRespond, string memory _rpa, address _oracle) public {
-        require(msg.sender == buyer);
+        // require(msg.sender == buyer);
         activeOffer = true;
         offerRespondedTo = false;
         rpa = _rpa;
