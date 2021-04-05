@@ -17,7 +17,7 @@ module.exports = {
     },
     kovan: {
       provider: () => {
-        return new HDWalletProvider("soccer river worry oxygen input diamond erase bridge creek phrase blur heavy", url)
+        return new HDWalletProvider(mnemonic, url)
       },
       network_id: '42',
       skipDryRun: true
