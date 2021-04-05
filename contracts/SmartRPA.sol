@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
 // import "https://github.com/smartcontractkit/chainlink/evm-contracts/src/v0.6/ChainlinkClient.sol";
 
-// mapping(key => value) <access specifier> <name>;
 
 contract SmartRPA is ERC721, ChainlinkClient {
 
