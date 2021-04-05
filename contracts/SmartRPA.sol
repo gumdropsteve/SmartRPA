@@ -10,6 +10,10 @@ import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
 // mapping(key => value) <access specifier> <name>;
 
 contract SmartRPA is ERC721, ChainlinkClient {
+
+    enum OfferResponse{ NO_RESPONSE, ACCEPT, REJECT }
+    enum ClauseCode { INITIAL_RESPONSE, CLOSE_OF_ESCROW }
+
     address payable private buyer;
     address payable private seller;
    
@@ -41,8 +45,7 @@ contract SmartRPA is ERC721, ChainlinkClient {
     }
 
     // store url to RPA url (Docusign, etc...)
-    function storeContract(string memory url) public activeRPA {
-        require((msg.sender == buyer) || (msg.sender == seller));
+    function storeContract(string memory url) public activeRPA buyerOrSeller {
         rpa = url;
     }
 
@@ -52,27 +55,22 @@ contract SmartRPA is ERC721, ChainlinkClient {
     }
    
     // delete contract
-    function terminateContract() private {
-        require((msg.sender == buyer) || (msg.sender == seller));
-        if (activeOffer == false) {
-            selfdestruct(buyer);
-        } else {
-            activeOffer = true;
-        }   
+    function terminateContract() public buyerOrSeller {
+        selfdestruct(buyer);  
     }
     
     
     // dont call this function until some initial link has been deposited
     // activates the rpa (send initial offer to seller)
     // expire the rpa after expirationTime has elapsed (in minutes)
-    function submitOffer(uint daysToRespond, string memory _rpa, address _oracle) public {
-        // require(msg.sender == buyer);
+    function submitOffer(uint daysToRespond, string memory _rpa, address _oracle) public returns (bytes32 requestId) {
+        require(msg.sender == buyer);
         activeOffer = true;
         offerRespondedTo = false;
         rpa = _rpa;
         // oracle = //0xAA1DC356dc4B18f30C347798FD5379F3D77ABC5b; // https://ethereum.stackexchange.com/q/96531/69999
         oracle = _oracle; // use dependency injection so we can pass mock oracles in for testing
-        createTimerForExpiration(daysToRespond * 1 minutes, "0"); // convert to minutes for timer (1440 minutes = 1 day), clauseCode ('0' = initial offer acceptance)
+        return createTimerForExpiration(daysToRespond * 1 minutes, "0"); // convert to minutes for timer (1440 minutes = 1 day), clauseCode ('0' = initial offer acceptance)
     }
 
     /**
@@ -89,8 +87,7 @@ contract SmartRPA is ERC721, ChainlinkClient {
     /**
      * check contract condition to see if it's been met or not
      */
-    function checkClause(uint256 _clauseCode) public view activeRPA returns (bool) {
-        require((msg.sender == buyer) || (msg.sender == seller));
+    function checkClause(uint256 _clauseCode) public view activeRPA buyerOrSeller returns (bool) {
         if(_clauseCode==0) {   // initial response
             if ((offerRespondedTo==true) && (activeOffer==true)) {
                 return true;
@@ -138,9 +135,26 @@ contract SmartRPA is ERC721, ChainlinkClient {
         }
     }
 
+    // check if the smart contract exists
+    // only used for testing purposes
+    function contractExists() public view returns (bool) {
+        address contractAddress = address(this);
+        uint size;
+        assembly {
+            size := extcodesize(contractAddress)
+        }
+        return size > 0;
+    }
+
     // contract must be active for these functions to run
     modifier activeRPA() {
         require(activeOffer, "RPA contract hasn't been activated");
+        _;
+    }
+
+    // contract request must originate from buyer or seller
+    modifier buyerOrSeller() {
+        require((msg.sender == buyer) || (msg.sender == seller));
         _;
     }
 
