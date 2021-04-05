@@ -11,9 +11,6 @@ import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
 
 contract SmartRPA is ERC721, ChainlinkClient {
 
-    enum OfferResponse{ NO_RESPONSE, ACCEPT, REJECT }
-    enum ClauseCode { INITIAL_RESPONSE, CLOSE_OF_ESCROW }
-
     address payable private buyer;
     address payable private seller;
    
@@ -28,6 +25,9 @@ contract SmartRPA is ERC721, ChainlinkClient {
     bool private finalFundsDeposited;
     
     string clauseCode;
+
+    mapping(string => uint) clauseCodes;
+    mapping(string => uint) offerResponses;
     
     constructor(address _link) ERC721("SmartRPA", "SRPA") public {
         buyer = msg.sender;
@@ -42,6 +42,12 @@ contract SmartRPA is ERC721, ChainlinkClient {
        
         activeOffer = false;
         offerRespondedTo = false;
+
+        clauseCodes['INITIAL_RESPONSE'] = 0;
+        clauseCodes['CLOSE_OF_ESCROW'] = 1;
+        offerResponses['ACCEPT'] = 0;
+        offerResponses['COUNTER'] = 1;
+        offerResponses['REJECT'] = 2;
     }
 
     // store url to RPA url (Docusign, etc...)
@@ -70,7 +76,7 @@ contract SmartRPA is ERC721, ChainlinkClient {
         rpa = _rpa;
         // oracle = //0xAA1DC356dc4B18f30C347798FD5379F3D77ABC5b; // https://ethereum.stackexchange.com/q/96531/69999
         oracle = _oracle; // use dependency injection so we can pass mock oracles in for testing
-        return createTimerForExpiration(daysToRespond * 1 minutes, "0"); // convert to minutes for timer (1440 minutes = 1 day), clauseCode ('0' = initial offer acceptance)
+        return createTimerForExpiration(daysToRespond * 1 minutes, "INITIAL_RESPONSE"); // convert to minutes for timer (1440 minutes = 1 day), clauseCode ('0' = initial offer acceptance)
     }
 
     /**
@@ -129,8 +135,8 @@ contract SmartRPA is ERC721, ChainlinkClient {
      * should return the contract balance to the owners (buyer) address
      * and clears the contract data from the block chain
      */
-    function expireRPAContract(bytes32 _requestId, uint256 _clauseCode) public activeRPA recordChainlinkFulfillment(_requestId) {
-        if (checkClause(_clauseCode)==false) {
+    function expireRPAContract(bytes32 _requestId, string memory _clauseCode) public activeRPA recordChainlinkFulfillment(_requestId) {
+        if (checkClause(clauseCodes[_clauseCode])==false) {
             terminateContract();
         }
     }

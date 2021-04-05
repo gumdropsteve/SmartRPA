@@ -18,6 +18,6 @@ module.exports = async (deployer, network, [defaultAccount]) => {
   } else {
     // For kovan networks, use the 0 address to allow the ChainlinkRegistry
     // contract automatically retrieve the correct address for you
-    deployer.deploy(MyContract, '0x0000000000000000000000000000000000000000')
+    deployer.deploy(SmartRPA, '0x0000000000000000000000000000000000000000')
   }
 }

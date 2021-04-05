@@ -1,4 +1,4 @@
-const MyContract = artifacts.require('SmartRPA')
+const SmartRPA = artifacts.require('SmartRPA')
 const LinkTokenInterface = artifacts.require('LinkTokenInterface')
 
 /*
@@ -11,7 +11,7 @@ const payment = process.env.TRUFFLE_CL_BOX_PAYMENT || '1000000000000000000'
 
 module.exports = async callback => {
   try {
-    const mc = await MyContract.deployed()
+    const mc = await SmartRPA.deployed()
     const tokenAddress = await mc.getChainlinkToken()
     const token = await LinkTokenInterface.at(tokenAddress)
     console.log('Funding contract:', mc.address)
