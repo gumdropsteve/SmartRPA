@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.6.0;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.3.0/contracts/token/ERC721/ERC721.sol";
-import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
-// import "https://github.com/smartcontractkit/chainlink/evm-contracts/src/v0.6/ChainlinkClient.sol";
+// import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.3.0/contracts/token/ERC721/ERC721.sol";
+// import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
+import "https://github.com/smartcontractkit/chainlink/evm-contracts/src/v0.6/ChainlinkClient.sol";
+import "https://github.com/smartcontractkit/chainlink/evm-contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
 
 
 contract SmartRPA is ERC721, ChainlinkClient {
@@ -28,6 +29,8 @@ contract SmartRPA is ERC721, ChainlinkClient {
     mapping(string => uint) clauseCodes;
     mapping(string => uint) offerResponses;
     
+    AggregatorV3Interface internal priceFeed;
+
     constructor(address _link) ERC721("SmartRPA", "SRPA") public {
         buyer = msg.sender;
         seller = 0x479A603C1Cb5F019c50A90Eb74F046B89AB780f7;
@@ -38,6 +41,8 @@ contract SmartRPA is ERC721, ChainlinkClient {
         }
         jobId = "982105d690504c5d9ce374d040c08654";
         fee = 0.1 * 10 ** 18; // 0.1 LINK
+        
+        priceFeed = AggregatorV3Interface(0x9326BFA02ADD2366b30bacB125260Af641031331);
        
         activeOffer = false;
         offerRespondedTo = false;
@@ -47,6 +52,20 @@ contract SmartRPA is ERC721, ChainlinkClient {
         offerResponses['ACCEPT'] = 0;
         offerResponses['COUNTER'] = 1;
         offerResponses['REJECT'] = 2;
+    }
+    
+    /**
+     * Returns the latest price
+     */
+    function getLatestPrice() public view returns (int) {
+        (
+            uint80 roundID, 
+            int price,
+            uint startedAt,
+            uint timeStamp,
+            uint80 answeredInRound  // if unused commented, different left/right error
+        ) = priceFeed.latestRoundData();
+        return (price);
     }
 
     // store url to RPA url (Docusign, etc...)
@@ -63,7 +82,6 @@ contract SmartRPA is ERC721, ChainlinkClient {
     function terminateContract() public buyerOrSeller {
         selfdestruct(buyer);  
     }
-    
     
     // dont call this function until some initial link has been deposited
     // activates the rpa (send initial offer to seller)
@@ -126,8 +144,8 @@ contract SmartRPA is ERC721, ChainlinkClient {
             activeOffer = false;
         } else {
             activeOffer = true;
-            }
         }
+    }
    
     /**
      * fires when the RPA contract is expired
@@ -162,5 +180,4 @@ contract SmartRPA is ERC721, ChainlinkClient {
         require((msg.sender == buyer) || (msg.sender == seller));
         _;
     }
-
 }
