@@ -37,13 +37,14 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
         bool activeOffer;
         bool offerRespondedTo; // have the offer been responded to?
         uint256 offerResponse; // what's the offer response code?
-        requestId; // request id 
+        bytes32 requestid;
         }
     Offer[] public offers;
 
     mapping(bytes32 => string) requestToRPA;
     mapping(bytes32 => address) requestToSender;
     mapping(uint256 => string) requestToTokenId;
+    mapping(address => address payable) addressToPayable;
 
     constructor(address _link) 
     ERC721("SmartRPA", "SRPA") 
@@ -80,13 +81,24 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
     }
 
     // delete contract
-    function terminateContract() public buyerOrSeller {
-        selfdestruct(buyer);  
+    function terminateContract(bytes32 _requestId) public {
+        selfdestruct(addressToPayable[requestToSender[_requestId]]);  
     }
-    
-    // // dont call this function until some initial link has been deposited
-    // // activates the rpa (send initial offer to seller)
-    // // expire the rpa after expirationTime has elapsed (in minutes)
+
+    // function testTerminate() public {
+    //     selfdestruct(addressToPayable[requestToSender[_requestId]]);
+    // }
+
+    // delete token
+    function burn(uint256 tokenId)
+    public {
+        require(_isApprovedOrOwner(msg.sender, tokenId));
+        _burn(tokenId);
+    }
+
+    // dont call this function until some initial link has been deposited
+    // activates the rpa (send initial offer to seller)
+    // expire the rpa after expirationTime has elapsed (in minutes)
     function submitOffer(uint256 daysToRespond, string memory _rpa) public returns (bytes32 requestId) {
         uint256 newId = offers.length; // token id
         requestId = createTimerForExpiration(daysToRespond * 1 minutes,
@@ -104,23 +116,26 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
         _safeMint(requestToSender[requestId], newId); // create offer token
         return requestId;
     }
-
+    
     /**
      * Create a Chainlink request to start a timer
      * when the timer expires, the rpa is considered expired
      */
-    function createTimerForExpiration(uint256 durationInMinutes, uint256 _tokenID, string memory _clauseCode) private returns (bytes32 requestId) {
-        Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.expireRPAContract.selector);
+    function createTimerForExpiration(uint256 durationInMinutes, uint256 _tokenID, string memory _clauseCode) 
+    private returns (bytes32 requestId) {
+        Chainlink.Request memory request = buildChainlinkRequest(jobId, 
+                                                                 address(this), 
+                                                                 this.expireRPAContract.selector);
         request.addUint("until", block.timestamp + durationInMinutes);
-        request.add("tokenID", requestToTokenId[_tokenID]);
-        request.add("clauseCode", _clauseCode);
+        request.add("tokenId", requestToTokenId[_tokenID]);
+        request.add("_clauseCode", _clauseCode);
         return sendChainlinkRequestTo(oracle, request, fee);
     }
     
     /**
      * check contract condition to see if it's been met or not
      */
-    function checkClause(uint256 tokenId, uint256 _clauseCode) public view buyerOrSeller returns (bool) {
+    function checkClause(uint256 tokenId, uint256 _clauseCode) public view returns (bool) {
         if(_clauseCode==0) {   // initial response
             if (offers[tokenId].offerRespondedTo==true) {
                 return true;
@@ -189,7 +204,7 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
     function expireRPAContract(bytes32 _requestId, uint256 _tokenID, string memory _clauseCode) 
     public recordChainlinkFulfillment(_requestId) {
         if (checkClause(_tokenID, clauseCodes[_clauseCode])==false) {
-            terminateContract();
+            terminateContract(_requestId);
         }
     }
 
