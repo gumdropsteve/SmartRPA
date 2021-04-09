@@ -191,6 +191,8 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
             offers[tokenId].activeOffer = false;
         } else {
             offers[tokenId].activeOffer = true;
+            underContract = true;
+            buyer = addressToPayable[ownerOf(tokenId)];
             }
         }
 
