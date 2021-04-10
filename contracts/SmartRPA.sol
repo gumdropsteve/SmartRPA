@@ -210,6 +210,28 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
         }
     }
 
+    // return details of offer token
+    function getOfferDetails(uint256 tokenId) 
+    public view
+        returns (
+        uint256,  // in days
+        // uint256,  // in days
+        string memory,  // url to contract on docusign or etc...
+        bool,
+        bool, // have the offer been responded to?
+        uint256 // what's the offer response code?
+        )
+    {
+        return (
+            offers[tokenId].initialResponseTime,
+            // offers[tokenId].closeOfEscrowTime,
+            offers[tokenId].rpaURL,
+            offers[tokenId].activeOffer,
+            offers[tokenId].offerRespondedTo,
+            offers[tokenId].offerResponse
+        );
+    }
+
     // check if the smart contract exists
     // only used for testing purposes
     function contractExists() public view returns (bool) {
