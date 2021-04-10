@@ -2,9 +2,20 @@
 Neighbor to neighbor real estate transactions.
 
 ## Description
-In the past, Smart Contracts have been integrated with electric vehicles via the use of specialized hardware that plugs directly into the vehicle to obtain real-time data. Not only were these examples restricted to just accessing data, but they also didn't scale well, as each vehicle requires special hardware installed. Tesla electric vehicles have a proper feature rich API that can be leveraged to obtain vehicle data & change the state of the vehicle, which then gives us the ability to create a custom external adapter to connect Smart Contracts to the vehicle via a Chainlink Oracle, giving the Smart Contract full access to the given vehicles data & ability to change its state.
+Selling a home can be a lot of fun. Selling a home can be a lot of not fun as well. Often, the difference is the ability of the most interested parties (Buyer and Seller) to know what is going on, and where they stand.
 
-This example demonstrates the design pattern described above, applying it to the use case of the peer to peer sharing economy. In traditional vehicle rental platforms, the vehicle renter relies on the 'brand power' of the company renting the vehicles, and trusts that the bond they submit will be returned if they adhered to the conditions. And as a vehicle owner/provider, going through a trusted centralized platform usually requires sacrificing approximately 30% of revenue earned. But in a peer to peer scenario, both renter and owner are strangers, there is no 'brand power', and there's no guarantee any bond paid will be returned fairly if agreement conditions are met. This is where a Smart contract connected to external data and events can be leveraged to facilitate a digital agreement between a Vehicle Owner & Vehicle Renter in a trust minimized & secure way.
+As a [ERC-721](https://docs.openzeppelin.com/contracts/2.x/api/token/erc721) Non-Fungible Token contract, SmartRPA enables secure transparency for both the Homeowner (Seller) and Potential Buyers by integrating Chainlink time enforcement ([Alarm Clock](https://docs.chain.link/docs/chainlink-alarm-clock)) with the trust of blockchain and existing document management systems (e.g. DocuSign).
+
+It's really quite simple.
+1. A Seller posts their listing on-chain by deploying a SmartRPA.
+2. Potential Buyers submit the URL of their offer, and the number of days the Seller has to respond.
+3. Each Potential Buyers' submission returns them a unique SRPA token that's linked to their offer. They can use this to check its status.
+4. Once an offer is submitted, a Chainlink Alarm Clock is started with a clause check to see if it was accepted or countered within the offer's time limit.
+   - If it was not, that offer's SRPA token is [burned](https://docs.openzeppelin.com/contracts/2.x/api/token/erc721#ERC721-_burn-uint256-) (transfering ownership from the Potential Buyer to no one) as the offer is no longer active. 
+   - If it was, a similar timer is started for the Counter Offer or for Close of Escrow and the token's offer URL becomes the SmartRPA's offer URL.
+
+At any point, the Seller can see how many offers they have, when each expires, and securely access them through familiar standards. Listing on-chain also facilitates the use of cryptocurrencies or other digital assets as payment.
+
 
 ## Demo
 #### Live Demo
