@@ -3,11 +3,8 @@
 pragma solidity ^0.6.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.3.0/contracts/token/ERC721/ERC721.sol";
 import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
-// import "https://github.com/smartcontractkit/chainlink/evm-contracts/src/v0.6/ChainlinkClient.sol";
 import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
-// import "https://github.com/smartcontractkit/chainlink/evm-contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 
@@ -80,16 +77,8 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
         return rpa;
     }
 
-    // delete contract
-    function terminateContract(bytes32 _requestId) public {
-        selfdestruct(addressToPayable[requestToSender[_requestId]]);  
-    }
-
-    // function testTerminate() public {
-    //     selfdestruct(addressToPayable[requestToSender[_requestId]]);
-    // }
-
-    // delete token
+    // offer no longer on the table
+    // transfers ownership of SRPA token to nobody
     function burn(uint256 tokenId)
     public {
         require(_isApprovedOrOwner(msg.sender, tokenId));
@@ -196,8 +185,6 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
             }
         }
 
-    // function expireOffer(bytes32 _requestId, _clauseCode);
-   
     /**
      * fires when the RPA contract is expired
      * should return the contract balance to the owners (buyer) address
@@ -206,7 +193,9 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
     function expireRPAContract(bytes32 _requestId, uint256 _tokenID, string memory _clauseCode) 
     public recordChainlinkFulfillment(_requestId) {
         if (checkClause(_tokenID, clauseCodes[_clauseCode])==false) {
-            terminateContract(_requestId);
+            burn(_tokenID);
+        }
+        else {
         }
     }
 
