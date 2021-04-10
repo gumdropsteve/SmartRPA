@@ -29,9 +29,7 @@ Link to live demo here
 Embedded youtube video here
 
 ## Architecture diagram
-Diagram here
-- Listing - `SmartRPA.sol` deployed ERC721 contract
-- Offers - minted tokens
+![](https://lh5.googleusercontent.com/bAUlNfn9vL7s_ikmvKaVdr05Io-aiRE2aHsqJNzHk_bemilHBZ1WHI10L2L_FfS5l78IozD4yOAmexHS4h0G0wFjHDyQwA47zzgXZlY98TBQToLkm8dxO9ug6YlggqTxQep-eols)
 
 ## Getting Started
 ```
