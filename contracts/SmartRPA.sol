@@ -214,12 +214,12 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
     function getOfferDetails(uint256 tokenId) 
     public view
         returns (
-        uint256,  // in days
-        // uint256,  // in days
-        string memory,  // url to contract on docusign or etc...
-        bool,
-        bool, // have the offer been responded to?
-        uint256 // what's the offer response code?
+        uint256 initialResponseTime,  // in days
+        // uint256 closeOfEscrowTime,  // in days
+        string memory rpaURL,  // url to contract on docusign or etc...
+        bool activeOffer,
+        bool offerRespondedTo, // have the offer been responded to?
+        uint256 offerResponse // what's the offer response code?
         )
     {
         return (
