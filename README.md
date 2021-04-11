@@ -52,4 +52,15 @@ truffle run verify SmartRPA --network rinkeby --license MIT
    - Address: 0x01BE23585060835E02B77ef475b0Cc51aA1e0709
 - ETH faucet: https://faucet.rinkeby.io
 
+### Unit tests
+
+To run the unit testing script
+
+```
+truffle test ./test/SmartRPA_test.js
+```
+
+The unit testing script will take you through each stage of the SRPA lifecycle. From initial offer creation from the buyer, to offer acceptance by the seller.
+
+#### Front end
 Front end repo: https://github.com/eserilev/smart-rpa-frontend

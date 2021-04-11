@@ -10,7 +10,7 @@ contract('SmartRPA', accounts => {
   const SmartRPA = artifacts.require('SmartRPA')
   const seller = accounts[0]
   const oracleNode = accounts[1]
-  const buyer = accounts[2]
+  const buyer = accounts[0]
 
   beforeEach(async () => {
     link = await LinkToken.new({ from: buyer })
@@ -25,7 +25,7 @@ contract('SmartRPA', accounts => {
     context('without LINK', () => {
       it('reverts', async () => {
         await expectRevert.unspecified(
-          smartRPA.submitOffer(1, "test", oc.address, {
+          smartRPA.submitOffer(1, "test", {
             from: buyer,
           }),
         )
@@ -37,57 +37,73 @@ contract('SmartRPA', accounts => {
           from: buyer,
         })
       })
-      context('while not activated', () => {
-        it('fails to retrieve RPA', async () => {
-          await expectRevert.unspecified(
-            smartRPA.retrieveContract({
-              from: buyer,
-            })
-          )
+      context('while no offer submitted', () => {
+        it('offer count is zero ', async () => {
+          var offerCountInitial = await smartRPA.getNumberOfOffers()
+          assert.equal(0, offerCountInitial);
         })
       })
-
-      context('while activated', () => {
-        it('buyer submits an initial offer to the smartRPA', async () => {
-          // check that initially this is a non active smartRPA
-          assert.isFalse(await smartRPA.activeOffer())
-
-          await smartRPA.submitOffer(1, "test", oc.address, {
+      context('when an offer is submitted', () => {
+        beforeEach(async () => {
+          await smartRPA.submitOffer(1, "test", {
             from: buyer,
           })
-
-          // check that the smartRPA is now set to active
-          assert.isTrue(await smartRPA.activeOffer())
+        })
+        it('check that an offer has been submitted', async () => {
+          var offerCountFinal = await smartRPA.getNumberOfOffers()
+          assert.equal(1, offerCountFinal)
         })
 
-        it('is able to retrieve RPA document', async () => {
-          
-          await smartRPA.submitOffer(1, "test", oc.address, {
-            from: buyer,
-          })
-
-          let rpaUrl = await smartRPA.retrieveContract({ from: buyer })
-          assert(rpaUrl)    
+        it('is able to retrieve a users offer details', async () => {
+          var myOffer = await smartRPA.offers(0);
+          assert.isNotNull(myOffer);
         })
-
-        it('expires activated RPA contract', async() => {
-          // check that contract exists
-          assert.isTrue(await smartRPA.contractExists())
-          
-          let request = await smartRPA.submitOffer(1, "test", oc.address, {
+        it('is initially an offer that hasnt been responded to by the seller yet', async () => {
+          var offer = await smartRPA.offers(0);
+          assert.isFalse(offer.offerRespondedTo);
+        })
+        it('is initially an active offer', async () => {
+          var isActive = await smartRPA.isActive(0);
+          assert.isTrue(isActive);
+        })
+        it('gets token URI', async () => {
+          var tokenURI = await smartRPA.getTokenURI(0);
+          assert.isNotNull(tokenURI);
+        })
+        it('sets token URI', async () => {
+          await smartRPA.setTokenURI(0, 'test', {
             from: buyer,
+          });
+
+          var tokenURI = await smartRPA.getTokenURI(0);
+          assert.equal('test', tokenURI);
+        })
+        context('seller rejects offer', () => { 
+          beforeEach(async () => {
+            await smartRPA.respondToOffer(0, 2), {
+              from: seller
+            }
           })
-
-          await smartRPA.terminateContract({ from: buyer })
-
-          try {
-            await smartRPA.contractExists()
-            assert.isTrue(false);
-          }
-          catch(ex) {
-            assert(ex);
-          }         
-        })        
+          it('is a rejected offer and is set to inactive', async () => {
+            var isActive = await smartRPA.isActive(0);;
+            var rejectedOffer = await smartRPA.offers(0);
+            assert.isFalse(isActive);       
+            assert.isTrue(rejectedOffer.offerRespondedTo);
+          })
+        })
+        context('seller accepts offer', () => { 
+          beforeEach(async () => {
+            await smartRPA.respondToOffer(0, 1), {
+              from: seller
+            }
+          })
+          it('is an active offer that has been responded to', async () => {
+            var isActive = await smartRPA.isActive(0); 
+            var acceptedOffer = await smartRPA.offers(0); 
+            assert.isTrue(isActive);  
+            assert.isTrue(acceptedOffer.offerRespondedTo);
+          })
+        })
       })
     })
   })
