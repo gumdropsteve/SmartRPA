@@ -16,8 +16,7 @@ It's really quite simple.
 
 At any point, the Seller can see how many offers they have, when each expires, and securely access them through familiar standards. Listing on-chain also facilitates the use of cryptocurrencies or other digital assets as payment.
 
-
-## Demo
+### Demo
 #### Live Demo
 Link to live demo here
 #### Video
