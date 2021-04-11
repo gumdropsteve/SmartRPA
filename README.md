@@ -46,16 +46,6 @@ truffle migrate --reset --network rinkeby -f 2
 truffle run verify SmartRPA --network rinkeby --license MIT
 ```
 
-### Long term vision
-#### DAO and Revenue Generation
-   - With enough utilization small fees can be applied to buyers and sellers during the SRPA process. These fees can be distributed to users holding LAND tokens
-   - LAND is an ERC20 token capped at 100,000,000 LAND and minted via a set emission schedule.
-   - LAND is a governance token with time-weighted voting and value accrual mechanisms.
-   - LAND value is accrued through the fees collected by the SRPA process. Holders of the token can also vote lock their LAND and begin voting on various DAO proporsals.
-#### Liquidity 
-   - Users can provide liquidity to SmartRPA liquidty pools and accrue APY gains. APY rewards will be paid out via newly minted LAND tokens. 
-   - With enough liquidity, SmartRPA may be able to begin offering collateralized loans and other financial services.
-
 ### Using the Testnets
 #### What is a testnet?
 TLDR: building on blockchain for free.
@@ -88,3 +78,16 @@ The unit testing script will take you through each stage of the SRPA lifecycle. 
 
 ### Front end
 Front end repo: https://github.com/eserilev/smart-rpa-frontend
+
+### Long term vision
+#### DAO and Revenue Generation
+   - With enough utilization, small fees can be applied to Buyers or Sellers during the SRPA process. 
+   - These fees can be distributed to users holding LAND tokens.
+      - LAND is an ERC20 token capped at 100,000,000 LAND and minted via a set emission schedule.
+      - LAND is a governance token with time-weighted voting and value accrual mechanisms.
+      - LAND value is accrued through the fees collected by the SRPA process. Holders of the token can also vote lock their LAND and begin voting on various DAO proporsals.
+
+#### Liquidity 
+   - Users can provide liquidity to SmartRPA liquidty pools and accrue APY gains. APY rewards will be paid out via newly minted LAND tokens. 
+   - With enough liquidity, SmartRPA may be able to begin offering collateralized loans and other financial services.
+
