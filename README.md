@@ -53,7 +53,6 @@ truffle run verify SmartRPA --network rinkeby --license MIT
 - ETH faucet: https://faucet.rinkeby.io
 
 ### Unit tests
-
 To run the unit testing script
 
 ```
