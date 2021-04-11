@@ -79,7 +79,7 @@ The unit testing script will take you through each stage of the SRPA lifecycle. 
 ### Front end
 Front end repo: https://github.com/eserilev/smart-rpa-frontend
 
-### Long term vision
+## Long term vision
 #### DAO and Revenue Generation
    - With enough utilization, small fees can be applied to Buyers or Sellers during the SRPA process. 
    - These fees can be distributed to users holding LAND tokens.
