@@ -60,6 +60,8 @@ To deploy and then interact with the contract, you'll need testnet LINK and test
 
 > LINK tokens are used to pay node operators for retrieving data for smart contracts and also for deposits placed by node operators as required by contract creators. - [Chainlink docs](https://docs.chain.link/docs/link-token-contracts)
 
+All of this info is related to your wallet. Here's a 4 minute video for setting up your wallet if you don't already have one: https://youtu.be/P7FX_1PePX0
+
 #### Ethereum (Rinkeby)
 - LINK faucet: https://rinkeby.chain.link
    - Address: 0x01BE23585060835E02B77ef475b0Cc51aA1e0709
