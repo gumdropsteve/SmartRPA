@@ -29,7 +29,7 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
     
     struct Offer {
         uint256 initialResponseTime;  // in days
-        // uint256 closeOfEscrowTime;  // in days
+        uint256 closeOfEscrowTime;  // in days
         string rpaURL;  // url to contract on docusign or etc...
         bool activeOffer;
         bool offerRespondedTo; // have the offer been responded to?
@@ -96,11 +96,12 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
         requestToRPA[requestId] = _rpa;
         requestToSender[requestId] = msg.sender;
         offers.push(Offer(daysToRespond, // add offer to collection
-                          _rpa,
-                          true,
-                          false,
-                          999,
-                          requestId
+                          daysToRespond + 30, // close of escrow
+                          _rpa, // contract url
+                          true, // active offer?
+                          false, // offer responded to?
+                          999, // offer response (999=none)
+                          requestId // chainlink request id
                           ));
         _safeMint(requestToSender[requestId], newId); // create offer token
         return requestId;
@@ -204,7 +205,7 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
     public view
         returns (
         uint256 initialResponseTime,  // in days
-        // uint256 closeOfEscrowTime,  // in days
+        uint256 closeOfEscrowTime,  // in days
         string memory rpaURL,  // url to contract on docusign or etc...
         bool activeOffer,
         bool offerRespondedTo, // have the offer been responded to?
@@ -213,7 +214,7 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
     {
         return (
             offers[tokenId].initialResponseTime,
-            // offers[tokenId].closeOfEscrowTime,
+            offers[tokenId].closeOfEscrowTime,
             offers[tokenId].rpaURL,
             offers[tokenId].activeOffer,
             offers[tokenId].offerRespondedTo,
