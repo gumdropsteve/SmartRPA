@@ -3,11 +3,8 @@
 pragma solidity ^0.6.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.3.0/contracts/token/ERC721/ERC721.sol";
 import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
-// import "https://github.com/smartcontractkit/chainlink/evm-contracts/src/v0.6/ChainlinkClient.sol";
 import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
-// import "https://github.com/smartcontractkit/chainlink/evm-contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 
@@ -32,7 +29,7 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
     
     struct Offer {
         uint256 initialResponseTime;  // in days
-        // uint256 closeOfEscrowTime;  // in days
+        uint256 closeOfEscrowTime;  // in days
         string rpaURL;  // url to contract on docusign or etc...
         bool activeOffer;
         bool offerRespondedTo; // have the offer been responded to?
@@ -80,19 +77,12 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
         return rpa;
     }
 
-    // delete contract
-    function terminateContract(bytes32 _requestId) public {
-        selfdestruct(addressToPayable[requestToSender[_requestId]]);  
-    }
-
-    // function testTerminate() public {
-    //     selfdestruct(addressToPayable[requestToSender[_requestId]]);
-    // }
-
-    // delete token
+    // offer no longer on the table
+    // transfers ownership of SRPA token to nobody
     function burn(uint256 tokenId)
     public {
         require(_isApprovedOrOwner(msg.sender, tokenId));
+        offers[tokenId].activeOffer = false;
         _burn(tokenId);
     }
 
@@ -107,11 +97,12 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
         requestToRPA[requestId] = _rpa;
         requestToSender[requestId] = msg.sender;
         offers.push(Offer(daysToRespond, // add offer to collection
-                          _rpa,
-                          true,
-                          false,
-                          999,
-                          requestId
+                          daysToRespond + 30, // close of escrow
+                          _rpa, // contract url
+                          true, // active offer?
+                          false, // offer responded to?
+                          999, // offer response (999=none)
+                          requestId // chainlink request id
                           ));
         _safeMint(requestToSender[requestId], newId); // create offer token
         return requestId;
@@ -196,8 +187,6 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
             }
         }
 
-    // function expireOffer(bytes32 _requestId, _clauseCode);
-   
     /**
      * fires when the RPA contract is expired
      * should return the contract balance to the owners (buyer) address
@@ -206,7 +195,9 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
     function expireRPAContract(bytes32 _requestId, uint256 _tokenID, string memory _clauseCode) 
     public recordChainlinkFulfillment(_requestId) {
         if (checkClause(_tokenID, clauseCodes[_clauseCode])==false) {
-            terminateContract(_requestId);
+            burn(_tokenID);
+        }
+        else {
         }
     }
 
@@ -215,7 +206,7 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
     public view
         returns (
         uint256 initialResponseTime,  // in days
-        // uint256 closeOfEscrowTime,  // in days
+        uint256 closeOfEscrowTime,  // in days
         string memory rpaURL,  // url to contract on docusign or etc...
         bool activeOffer,
         bool offerRespondedTo, // have the offer been responded to?
@@ -224,7 +215,7 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
     {
         return (
             offers[tokenId].initialResponseTime,
-            // offers[tokenId].closeOfEscrowTime,
+            offers[tokenId].closeOfEscrowTime,
             offers[tokenId].rpaURL,
             offers[tokenId].activeOffer,
             offers[tokenId].offerRespondedTo,
