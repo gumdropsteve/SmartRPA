@@ -82,6 +82,7 @@ contract SmartRPA is ERC721, Ownable, ChainlinkClient {
     function burn(uint256 tokenId)
     public {
         require(_isApprovedOrOwner(msg.sender, tokenId));
+        offers[tokenId].activeOffer = false;
         _burn(tokenId);
     }
 
