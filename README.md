@@ -27,7 +27,7 @@ Link to live demo here
 </p>
 Embedded youtube video here
 
-## Architecture diagram
+### Architecture diagram
 ![Architecture diagram](https://lh4.googleusercontent.com/rmxWmaNei35p6Hm1zL5coNXkAVqQ3wVcd_7v4QpDv64G9YqRNo7x_RFmfDC6ilDalXj3KTjHq-kx73jynGYcY66WBo5VWmETTipeaLQnICCwqgc3DnIzbwQrDDSt6dd3-EeSkiMz)
 
 ## Getting Started
