@@ -29,7 +29,7 @@ Link to live demo here
 Embedded youtube video here
 
 ## Architecture diagram
-![](https://lh5.googleusercontent.com/bAUlNfn9vL7s_ikmvKaVdr05Io-aiRE2aHsqJNzHk_bemilHBZ1WHI10L2L_FfS5l78IozD4yOAmexHS4h0G0wFjHDyQwA47zzgXZlY98TBQToLkm8dxO9ug6YlggqTxQep-eols)
+![Architecture diagram](https://lh4.googleusercontent.com/rmxWmaNei35p6Hm1zL5coNXkAVqQ3wVcd_7v4QpDv64G9YqRNo7x_RFmfDC6ilDalXj3KTjHq-kx73jynGYcY66WBo5VWmETTipeaLQnICCwqgc3DnIzbwQrDDSt6dd3-EeSkiMz)
 
 ## Getting Started
 ```
@@ -41,9 +41,15 @@ npm install
 
 truffle compile
 
-truffle migrate --reset --network kovan -f 2
+truffle migrate --reset --network rinkeby -f 2
 
-truffle run verify SmartRPA --network kovan --license MIT
+truffle run verify SmartRPA --network rinkeby --license MIT
 ```
 
-Front end: https://github.com/eserilev/smart-rpa-frontend
+### Using the Testnets
+#### Ethereum (Rinkeby)
+- LINK faucet: https://rinkeby.chain.link
+   - Address: 0x01BE23585060835E02B77ef475b0Cc51aA1e0709
+- ETH faucet: https://faucet.rinkeby.io
+
+Front end repo: https://github.com/eserilev/smart-rpa-frontend
