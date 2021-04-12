@@ -62,6 +62,8 @@ All of this info is related to your wallet. Here's a 4 minute video for setting 
    - Address: 0x01BE23585060835E02B77ef475b0Cc51aA1e0709
 - ETH faucet: https://faucet.rinkeby.io
 
+SRPA Token address: 0x6da11450865C6cff248E29D7f64Ce285c94590dD
+
 ### Unit tests
 To run the unit testing script
 
