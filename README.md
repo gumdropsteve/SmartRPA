@@ -18,14 +18,10 @@ At any point, the Seller can see how many offers they have, when each expires, a
 
 ### Demo
 #### Live Demo
-Link to live demo here
+https://nevada-smart-rpa.herokuapp.com/
+
 #### Video
-<p align="center">
-   <a target="_blank" href="https://youtu.be/yFnXwSGstus">
-    <img src="https://www.brandinginasia.com/wp-content/uploads/2017/05/YouTube-Play-Button-Before-and-After-Branding-in-Asia.png"/>
-   </a>
-</p>
-Embedded youtube video here
+https://youtu.be/MEANYygidyE
 
 ### Architecture diagram
 ![Architecture diagram](https://lh4.googleusercontent.com/rmxWmaNei35p6Hm1zL5coNXkAVqQ3wVcd_7v4QpDv64G9YqRNo7x_RFmfDC6ilDalXj3KTjHq-kx73jynGYcY66WBo5VWmETTipeaLQnICCwqgc3DnIzbwQrDDSt6dd3-EeSkiMz)
