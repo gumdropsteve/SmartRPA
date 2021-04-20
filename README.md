@@ -28,9 +28,9 @@ https://youtu.be/MEANYygidyE
 
 ## Getting Started
 ```
-git clone https://github.com/gumdropsteve/nevada-smart-rpa
+git clone https://github.com/gumdropsteve/SmartRPA
 
-cd nevada-smart-rpa
+cd SmartRPA
 
 npm install
 
